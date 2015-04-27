@@ -32,12 +32,18 @@
     if (self) {
         _likedText = [NSLocalizedString(@"liked", nil) uppercaseString];
         _likedColor = [UIColor colorWith8BitRed:29.f green:245.f blue:106.f alpha:1.f];
-        _likedRotationAngle = -15.f;
-
+        _likedRotationAngle = 0.f;
+        _rightImageView = [[UIImageView alloc] init];
+        _leftImageView = [[UIImageView alloc] init];
+        _rightUserNameLabel = [[UILabel alloc] init];
+        _leftUserNameLabel = [[UILabel alloc] init];
+        _rightImageViewRect = CGRectMake(0,0,0,0);
+        _leftImageViewRect = CGRectMake(0,0,0,0);
+        _questionLabel = [[UILabel alloc] init];
+        _questionNumView = [[UIImageView alloc] init];
         _nopeText = [NSLocalizedString(@"nope", nil) uppercaseString];
         _nopeColor = [UIColor colorWith8BitRed:247.f green:91.f blue:37.f alpha:1.f];
-        _nopeRotationAngle = 15.f;
-
+        _nopeRotationAngle = 0.f;
         _threshold = 100.f;
     }
     return self;

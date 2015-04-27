@@ -36,16 +36,29 @@
  * The main image to be displayed and then "liked" or "disliked".
  */
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIImageView *rightImageView;
+
+@property (nonatomic, strong) UIView *leftCoverView;
+@property (nonatomic, strong) UIView *rightCoverView;
+
+@property (nonatomic, strong) UILabel *questionLabel;
+@property (nonatomic, strong) UIImageView *questionNumView;
+@property (nonatomic, strong) NSMutableDictionary *questionData;
 
 /*!
  * The "liked" view, which fades in as the `MDCSwipeToChooseView` is panned to the right.
  */
-@property (nonatomic, strong) UIView *likedView;
+@property (nonatomic, strong) UIView *rightLikedView;
+@property (nonatomic, strong) UIView *leftLikedView;
 
 /*!
  * The "nope" view, which fades in as the `MDCSwipeToChooseView` is panned to the left.
  */
-@property (nonatomic, strong) UIView *nopeView;
+@property (nonatomic, strong) UIView *rightNopeView;
+@property (nonatomic, strong) UIView *leftNopeView;
+
+@property (nonatomic, strong) UILabel *rightUserNameLabel;
+@property (nonatomic, strong) UILabel *leftUserNameLabel;
 
 /*!
  * The designated initializer takes a `frame` and a set of options to customize

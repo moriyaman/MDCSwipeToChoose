@@ -47,8 +47,7 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
         _options = options ? options : [MDCSwipeToChooseViewOptions new];
         [self setupView];
         [self constructImageView];
-        [self constructLikedView];
-        [self constructNopeImageView];
+        [self constructUserNameLabel];
         [self setupSwipeToChoose];
     }
     return self;
@@ -57,9 +56,11 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
 #pragma mark - Internal Methods
 
 - (void)setupView {
-    self.backgroundColor = [UIColor clearColor];
-    self.layer.cornerRadius = 5.f;
-    self.layer.borderWidth = 2.f;
+    self.backgroundColor = [UIColor whiteColor];
+    self.layer.cornerRadius = 40.f;
+    self.clipsToBounds = true;
+
+    self.layer.borderWidth = 0.5f;
     self.layer.borderColor = [UIColor colorWith8BitRed:220.f
                                                  green:220.f
                                                   blue:220.f
@@ -67,36 +68,98 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
 }
 
 - (void)constructImageView {
-    _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
-    _imageView.clipsToBounds = YES;
+    _imageView = [[UIImageView alloc] initWithFrame:self.options.leftImageViewRect];
+    _rightImageView = [[UIImageView alloc] initWithFrame:self.options.rightImageViewRect];
+
+    _leftCoverView = [[UIView alloc] initWithFrame:CGRectMake(0,0,self.options.leftImageViewRect.size.width,self.options.leftImageViewRect.size.height)];
+    _leftCoverView.backgroundColor = [UIColor whiteColor];
+    _leftCoverView.tag = -1;
+    _leftCoverView.alpha = 0.f;
+
+    _rightCoverView = [[UIView alloc] initWithFrame:CGRectMake(0,0,self.options.rightImageViewRect.size.width,self.options.rightImageViewRect.size.height)];
+    _rightCoverView.backgroundColor = [UIColor whiteColor];
+    _rightCoverView.tag = -1;
+    _rightCoverView.alpha = 0.f;
+
+    _imageView.layer.cornerRadius = _imageView.frame.size.width * 0.5; //角丸の範囲＝数が大きいほど丸く
+    _imageView.clipsToBounds = true; //角丸に画像を切り抜く
+
+    _rightImageView.layer.cornerRadius = _rightImageView.frame.size.width * 0.5; //角丸の範囲＝数が大きいほど丸く
+    _rightImageView.clipsToBounds = true; //角丸に画像を切り抜く
+
+    [_imageView addSubview:_leftCoverView];
+    [_rightImageView addSubview:_rightCoverView];
+
     [self addSubview:_imageView];
+    [self addSubview:_rightImageView];
+
 }
+
+
+- (void)constructUserNameLabel {
+    _rightUserNameLabel = self.options.rightUserNameLabel;
+    _leftUserNameLabel = self.options.leftUserNameLabel;
+
+    [self addSubview:_rightUserNameLabel];
+    [self addSubview:_leftUserNameLabel];
+}
+
 
 - (void)constructLikedView {
     CGRect frame = CGRectMake(MDCSwipeToChooseViewHorizontalPadding,
                               MDCSwipeToChooseViewTopPadding,
                               CGRectGetMidX(_imageView.bounds),
                               MDCSwipeToChooseViewLabelWidth);
-    self.likedView = [[UIView alloc] initWithFrame:frame];
-    [self.likedView constructBorderedLabelWithText:self.options.likedText
+    self.rightLikedView = [[UIView alloc] initWithFrame:frame];
+    [self.rightLikedView constructBorderedLabelWithText:self.options.likedText
                                              color:self.options.likedColor
                                              angle:self.options.likedRotationAngle];
-    self.likedView.alpha = 0.f;
-    [self.imageView addSubview:self.likedView];
+    self.rightLikedView.alpha = 0.f;
+    self.rightLikedView.center = CGPointMake(_rightImageView.bounds.size.width/2, _rightImageView.bounds.size.height/2);
+
+    CGFloat width = CGRectGetMidX(self.imageView.bounds);
+    CGFloat xOrigin = CGRectGetMaxX(_imageView.bounds) - width - MDCSwipeToChooseViewHorizontalPadding;
+    self.leftLikedView = [[UIImageView alloc] initWithFrame:CGRectMake(xOrigin,
+                                                                  MDCSwipeToChooseViewTopPadding,
+                                                                  width,
+                                                                  MDCSwipeToChooseViewLabelWidth)];
+    [self.leftLikedView constructBorderedLabelWithText:self.options.likedText
+                                             color:self.options.likedColor
+                                             angle:self.options.likedRotationAngle];
+    self.leftLikedView.alpha = 0.f;
+    self.leftLikedView.center = CGPointMake(_imageView.bounds.size.width/2, _imageView.bounds.size.height/2);
+    [self.imageView addSubview:self.leftLikedView];
+    [self.rightImageView addSubview:self.rightLikedView];
+
 }
 
 - (void)constructNopeImageView {
     CGFloat width = CGRectGetMidX(self.imageView.bounds);
     CGFloat xOrigin = CGRectGetMaxX(_imageView.bounds) - width - MDCSwipeToChooseViewHorizontalPadding;
-    self.nopeView = [[UIImageView alloc] initWithFrame:CGRectMake(xOrigin,
+    self.leftNopeView = [[UIImageView alloc] initWithFrame:CGRectMake(xOrigin,
                                                                   MDCSwipeToChooseViewTopPadding,
                                                                   width,
                                                                   MDCSwipeToChooseViewLabelWidth)];
-    [self.nopeView constructBorderedLabelWithText:self.options.nopeText
+    [self.leftNopeView constructBorderedLabelWithText:self.options.nopeText
                                             color:self.options.nopeColor
                                             angle:self.options.nopeRotationAngle];
-    self.nopeView.alpha = 0.f;
-    [self.imageView addSubview:self.nopeView];
+    self.leftNopeView.alpha = 0.f;
+    self.leftNopeView.center = CGPointMake(_imageView.bounds.size.width/2, _imageView.bounds.size.height/2);
+    [self.imageView addSubview:self.leftNopeView];
+
+    CGRect frame = CGRectMake(MDCSwipeToChooseViewHorizontalPadding,
+                              MDCSwipeToChooseViewTopPadding,
+                              CGRectGetMidX(_imageView.bounds),
+                              MDCSwipeToChooseViewLabelWidth);
+
+    self.rightNopeView = [[UIView alloc] initWithFrame:frame];
+    [self.rightNopeView constructBorderedLabelWithText:self.options.nopeText
+                                            color:self.options.nopeColor
+                                            angle:self.options.nopeRotationAngle];
+    self.rightNopeView.alpha = 0.f;
+    self.rightNopeView.center = CGPointMake(_rightImageView.bounds.size.width/2, _rightImageView.bounds.size.height/2);
+    [self.rightImageView addSubview:self.rightNopeView];
+
 }
 
 - (void)setupSwipeToChoose {
@@ -104,21 +167,241 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
     options.delegate = self.options.delegate;
     options.threshold = self.options.threshold;
 
-    __block UIView *likedImageView = self.likedView;
-    __block UIView *nopeImageView = self.nopeView;
+    //__block UIView *rightLikedImageView = self.rightLikedView;
+    //__block UIView *leftNopeImageView = self.leftNopeView;
+    //__block UIView *leftLikedImageView = self.leftLikedView;
+    //__block UIView *rightNopeImageView = self.rightNopeView;
+
     __weak MDCSwipeToChooseView *weakself = self;
+
+    NSInteger center = self.bounds.size.width/2;
+    NSInteger bounds_height = self.bounds.size.height;
+    NSInteger bounds_width = self.bounds.size.width;
+    float width_ration = bounds_width/315.0;
+    float height_ration = bounds_height/385.0;
+
+    float width = self.options.leftImageViewRect.size.width;
+    float height = self.options.leftImageViewRect.size.height;
+
+    float max_width = width + 30.0*width_ration;
+    float max_height = height + 30.0*height_ration;
+
+    UIView *superview = self.imageView.superview;
+    self.imageView.layer.zPosition = 1;
+    self.rightImageView.layer.zPosition = 1;
+
+    float rightXposition = self.options.rightImageViewRect.origin.x;
+    float rightYposition = self.options.rightImageViewRect.origin.y;
+    float rightCenterYposition = self.options.rightImageViewRect.origin.y + height/2;
+
+    // leftだけ右側に合わせる
+    float leftXposition = self.options.leftImageViewRect.origin.x + width;
+    float leftYposition = self.options.leftImageViewRect.origin.y;
+    float leftCenterYposition = self.options.leftImageViewRect.origin.y + height/2;
+
+    float nameLabelHeight = self.leftUserNameLabel.frame.size.height;
+    float nameLabelWidth = self.leftUserNameLabel.frame.size.width;
+
+    // name label
+    CGRect leftNameLabelFrame = CGRectMake(leftXposition+width/2 - nameLabelWidth/2, self.leftUserNameLabel.frame, leftYposition+height+15, nameLabelWidth, nameLabelHeight);
+    CGRect rightNameLabelFrame = CGRectMake(rightXposition+width/2 - nameLabelWidth/2, self.leftUserNameLabel.frame, rightYposition+height+15, nameLabelWidth, nameLabelHeight);
+
+    int leftIndex = [superview.subviews indexOfObject:self.imageView];
+    int rightIndex = [superview.subviews indexOfObject:self.rightImageView];
+
+    // coverView
+    UIView *leftCoverView = [self.imageView viewWithTag: -1];
+    UIView *rightCoverView = [self.rightImageView viewWithTag: -1];
+
+    leftCoverView.clipsToBounds = true; //角丸に画像を切り抜く
+    rightCoverView.clipsToBounds = true; //角丸に画像を切り抜く
+
+    // font size
+    CGFloat fontSize = self.leftUserNameLabel.font.pointSize;
+
     options.onPan = ^(MDCPanState *state) {
         if (state.direction == MDCSwipeDirectionNone) {
-            likedImageView.alpha = 0.f;
-            nopeImageView.alpha = 0.f;
-        } else if (state.direction == MDCSwipeDirectionLeft) {
-            likedImageView.alpha = 0.f;
-            nopeImageView.alpha = state.thresholdRatio;
-        } else if (state.direction == MDCSwipeDirectionRight) {
-            likedImageView.alpha = state.thresholdRatio;
-            nopeImageView.alpha = 0.f;
-        }
 
+            // user photo
+            self.imageView.frame = self.options.leftImageViewRect;
+            self.rightImageView.frame = self.options.rightImageViewRect;
+            //self.imageView.leftCoverView.frame = CGRectMake(0,0,self.imageView.frame.size.width,self.imageView.frame.size.height);
+
+            leftCoverView.frame = CGRectMake(0,0,width,height);
+            rightCoverView.frame = CGRectMake(0,0,width,height);
+            leftCoverView.alpha = 0.f;
+            rightCoverView.alpha = 0.f;
+
+            // user name label
+            self.leftUserNameLabel.frame = leftNameLabelFrame;
+            self.rightUserNameLabel.frame = rightNameLabelFrame;
+
+            self.imageView.layer.cornerRadius = self.imageView.frame.size.width * 0.5; //角丸の範囲＝数が大きいほど丸く
+            self.rightImageView.layer.cornerRadius = self.rightImageView.frame.size.width * 0.5; //角丸の範囲＝数が大きいほど丸く
+
+            leftCoverView.layer.cornerRadius = width * 0.5;
+            rightCoverView.layer.cornerRadius = width * 0.5;
+
+            // user name label font
+            self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize];
+            self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize];
+
+        } else if (state.direction == MDCSwipeDirectionLeft) {
+            float rightReduction = 1.0f - state.thresholdRatio;
+            [superview bringSubviewToFront:self.imageView];
+            if (rightReduction >= 0.80) {
+
+              // for not choice
+              float rightResizeHeight = height*(rightReduction - 0.2*state.thresholdRatio);
+              float rightResizeWidth = width*(rightReduction - 0.2*state.thresholdRatio);
+              float rightResizeXposition = rightXposition - 100.0*state.thresholdRatio;
+              float rightResizeYposition = (rightCenterYposition - rightResizeWidth/2);
+              self.rightImageView.frame = CGRectMake(rightResizeXposition, rightResizeYposition, rightResizeWidth, rightResizeHeight);
+              self.rightImageView.layer.cornerRadius = rightResizeWidth * 0.5;
+
+              rightCoverView.frame = CGRectMake(0,0,rightResizeWidth,rightResizeHeight);
+              rightCoverView.alpha = 3*state.thresholdRatio;
+              rightCoverView.layer.cornerRadius = rightCoverView.frame.size.width * 0.5;
+
+              // for not choice label
+              float rightNameLabelResizeHeight = nameLabelHeight*(rightReduction - 0.2*state.thresholdRatio);
+              float rightNameLabelResizeWidth = nameLabelWidth*(rightReduction - 0.2*state.thresholdRatio);
+              self.rightUserNameLabel.frame = CGRectMake(rightResizeXposition+rightResizeWidth/2 - rightNameLabelResizeWidth/2, rightResizeYposition+rightResizeHeight+15, rightNameLabelResizeWidth, rightNameLabelResizeHeight);
+              self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
+
+              // for choice
+              float leftResizeHeight = height + 150*state.thresholdRatio;
+              float leftResizeWidth = width + 150*state.thresholdRatio;
+              float leftResizeXposition = leftXposition - leftResizeWidth + ((center - max_width/2) - leftXposition + leftResizeWidth)*5*state.thresholdRatio;
+              float leftResizeYposition = (leftCenterYposition - leftResizeHeight/2);
+              self.imageView.frame = CGRectMake(leftResizeXposition, leftResizeYposition, leftResizeWidth, leftResizeHeight);
+              self.imageView.layer.cornerRadius = leftResizeWidth * 0.5;
+
+              leftCoverView.frame = CGRectMake(0,0,leftResizeWidth,leftResizeHeight);
+              leftCoverView.alpha = 0.f;
+              leftCoverView.layer.cornerRadius = leftResizeWidth * 0.5;
+
+              // for choice label
+              float leftNameLabelResizeHeight = nameLabelHeight + 37.5*state.thresholdRatio;
+              float leftNameLabelResizeWidth = nameLabelWidth + 37.5*state.thresholdRatio;
+              self.leftUserNameLabel.frame = CGRectMake(leftResizeXposition+leftResizeWidth/2 - leftNameLabelResizeWidth/2, leftResizeYposition+leftResizeHeight+15, leftNameLabelResizeWidth, leftNameLabelResizeHeight);
+              self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*leftNameLabelResizeHeight/nameLabelHeight];
+            } else {
+              // for not choice
+              float rightResizeHeight = height*0.76;
+              float rightResizeWidth = width*0.76;
+              float rightResizeXposition = rightXposition - 20.0;
+              float rightResizeYposition = (rightCenterYposition - rightResizeWidth/2);
+              self.rightImageView.frame = CGRectMake(rightResizeXposition, rightResizeYposition, rightResizeWidth, rightResizeHeight);
+              self.rightImageView.layer.cornerRadius = rightResizeWidth * 0.5;
+
+              rightCoverView.frame = CGRectMake(0,0,rightResizeWidth,rightResizeHeight);
+              rightCoverView.alpha = 0.6f;
+              rightCoverView.layer.cornerRadius = rightCoverView.frame.size.width * 0.5;
+
+              // for not choice label
+              float rightNameLabelResizeHeight = nameLabelHeight*0.76;
+              float rightNameLabelResizeWidth = nameLabelWidth*0.76;
+              self.rightUserNameLabel.frame = CGRectMake(rightResizeXposition+rightResizeWidth/2 - rightNameLabelResizeWidth/2, rightResizeYposition+rightResizeHeight+15, rightNameLabelResizeWidth, rightNameLabelResizeHeight);
+              self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
+
+              // for choice
+              float leftResizeHeight = max_height;
+              float leftResizeWidth = max_width;
+              float leftResizeXposition = center - max_width/2;
+              float leftResizeYposition = (leftCenterYposition - leftResizeHeight/2);
+              self.imageView.frame = CGRectMake(leftResizeXposition, leftResizeYposition, leftResizeWidth, leftResizeHeight);
+              self.imageView.layer.cornerRadius = leftResizeWidth * 0.5; //角丸の範囲＝数が大きいほど丸く
+
+              leftCoverView.frame = CGRectMake(0,0,leftResizeWidth,leftResizeHeight);
+              leftCoverView.alpha = 0.f;
+              leftCoverView.layer.cornerRadius = leftResizeWidth * 0.5;
+
+              // for choice label
+              float leftNameLabelResizeHeight = nameLabelHeight + 7.5;
+              float leftNameLabelResizeWidth = nameLabelWidth + 7.5;
+              self.leftUserNameLabel.frame = CGRectMake(leftResizeXposition+leftResizeWidth/2 - leftNameLabelResizeWidth/2, leftResizeYposition+leftResizeHeight+15, leftNameLabelResizeWidth, leftNameLabelResizeHeight);
+              self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*leftNameLabelResizeHeight/nameLabelHeight];
+            }
+        } else if (state.direction == MDCSwipeDirectionRight) {
+            float reduction = 1.0f - state.thresholdRatio;
+            [superview bringSubviewToFront:self.rightImageView];
+            if (reduction >= 0.80) {
+              // for choice
+              float rightResizeHeight = height + 150*state.thresholdRatio;
+              float rightResizeWidth = width + 150*state.thresholdRatio;
+              float rightResizeXposition = rightXposition - (rightXposition - (center - max_width/2))*5*state.thresholdRatio;
+              float rightResizeYposition = (rightCenterYposition - rightResizeWidth/2);
+              self.rightImageView.frame = CGRectMake(rightResizeXposition, rightResizeYposition, rightResizeWidth, rightResizeHeight);
+              self.rightImageView.layer.cornerRadius = rightResizeWidth * 0.5;
+
+              rightCoverView.frame = CGRectMake(0,0,rightResizeWidth,rightResizeHeight);
+              rightCoverView.alpha = 0.f;
+              rightCoverView.layer.cornerRadius = rightResizeWidth * 0.5;
+
+              // for choice label
+              float rightNameLabelResizeHeight = nameLabelHeight + 37.5*state.thresholdRatio;
+              float rightNameLabelResizeWidth = nameLabelWidth + 37.5*state.thresholdRatio;
+              self.rightUserNameLabel.frame = CGRectMake(rightResizeXposition+rightResizeWidth/2 - rightNameLabelResizeWidth/2, rightResizeYposition+rightResizeHeight+15, rightNameLabelResizeWidth, rightNameLabelResizeHeight);
+              self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
+
+              // for not choice
+              float leftResizeHeight = height*(reduction - 0.2*state.thresholdRatio);
+              float leftResizeWidth = width*(reduction - 0.2*state.thresholdRatio);
+              float leftResizeXposition = leftXposition - leftResizeWidth + 100.0*state.thresholdRatio;
+              float leftResizeYposition = (leftCenterYposition - leftResizeHeight/2);
+              self.imageView.frame = CGRectMake(leftResizeXposition, leftResizeYposition, leftResizeWidth, leftResizeHeight);
+              self.imageView.layer.cornerRadius = leftResizeWidth * 0.5;
+
+              leftCoverView.frame = CGRectMake(0,0,leftResizeWidth,leftResizeHeight);
+              leftCoverView.alpha = 3*state.thresholdRatio;
+              leftCoverView.layer.cornerRadius = leftResizeWidth * 0.5;
+
+              // for not choice label
+              float leftNameLabelResizeHeight = nameLabelHeight*(reduction - 0.2*state.thresholdRatio);
+              float leftNameLabelResizeWidth = nameLabelWidth*(reduction - 0.2*state.thresholdRatio);
+              self.leftUserNameLabel.frame = CGRectMake(leftResizeXposition+leftResizeWidth/2 - leftNameLabelResizeWidth/2, leftResizeYposition+leftResizeHeight+15, leftNameLabelResizeWidth, leftNameLabelResizeHeight);
+              self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*leftNameLabelResizeHeight/nameLabelHeight];
+            } else {
+              // for choice
+              float rightResizeHeight = max_height;
+              float rightResizeWidth = max_width;
+              float rightResizeXposition = center - max_width/2;
+              float rightResizeYposition = (rightCenterYposition - rightResizeWidth/2);
+              self.rightImageView.frame = CGRectMake(rightResizeXposition, rightResizeYposition, rightResizeWidth, rightResizeHeight);
+              self.rightImageView.layer.cornerRadius = rightResizeWidth * 0.5;
+
+              rightCoverView.frame = CGRectMake(0,0,rightResizeWidth,rightResizeHeight);
+              rightCoverView.alpha = 0.f;
+              rightCoverView.layer.cornerRadius = rightResizeWidth * 0.5;
+
+              // for choice label
+              float rightNameLabelResizeHeight = nameLabelHeight + 7.5;
+              float rightNameLabelResizeWidth = nameLabelWidth + 7.5;
+              self.rightUserNameLabel.frame = CGRectMake(rightResizeXposition+rightResizeWidth/2 - rightNameLabelResizeWidth/2, rightResizeYposition+rightResizeHeight+15, rightNameLabelResizeWidth, rightNameLabelResizeHeight);
+              self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
+
+              // for not choice
+              float leftResizeHeight = height*0.76;
+              float leftResizeWidth = width*0.76;
+              float leftResizeXposition = leftXposition - leftResizeWidth + 20.0;
+              float leftResizeYposition = (leftCenterYposition - leftResizeHeight/2);
+              self.imageView.frame = CGRectMake(leftResizeXposition, leftResizeYposition, leftResizeWidth, leftResizeHeight);
+              self.imageView.layer.cornerRadius = leftResizeWidth * 0.5;
+
+              // for not choice label
+              float leftNameLabelResizeHeight = nameLabelHeight*0.76;
+              float leftNameLabelResizeWidth = nameLabelWidth*0.76;
+              self.leftUserNameLabel.frame = CGRectMake(leftResizeXposition+leftResizeWidth/2 - leftNameLabelResizeWidth/2, leftResizeYposition+leftResizeHeight+15, leftNameLabelResizeWidth, leftNameLabelResizeHeight);
+              self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*leftNameLabelResizeHeight/nameLabelHeight];
+
+              leftCoverView.frame = CGRectMake(0,0,leftResizeWidth,leftResizeHeight);
+              leftCoverView.alpha = 0.6f;
+              leftCoverView.layer.cornerRadius = leftResizeWidth * 0.5;
+            }
+
+            //leftNopeImageView.alpha = state.thresholdRatio;
+        }
         if (weakself.options.onPan) {
             weakself.options.onPan(state);
         }

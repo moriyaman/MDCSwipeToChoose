@@ -87,4 +87,15 @@
  */
 @property (nonatomic, copy) MDCSwipeToChooseOnPanBlock onPan;
 
+@property (nonatomic, strong) UIImageView *rightImageView;
+@property (nonatomic, strong) UIImageView *leftImageView;
+@property (nonatomic, strong) UILabel *questionLabel;
+@property (nonatomic, strong) UIImageView *questionNumView;
+
+@property (nonatomic, strong) UILabel *leftUserNameLabel;
+@property (nonatomic, strong) UILabel *rightUserNameLabel;
+
+@property (nonatomic, assign) CGRect rightImageViewRect;
+@property (nonatomic, assign) CGRect leftImageViewRect;
+
 @end
