@@ -193,30 +193,30 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
         } else if (state.direction == MDCSwipeDirectionLeft) {
             float rightReduction = 1.0f - state.thresholdRatio;
             [superview bringSubviewToFront:self.imageView];
-            if (rightReduction >= 0.80) {
+            if (rightReduction >= 0.60) {
 
               // for not choice
-              float rightResizeHeight = height*(rightReduction - 0.2*state.thresholdRatio);
-              float rightResizeWidth = width*(rightReduction - 0.2*state.thresholdRatio);
-              float rightResizeXposition = rightXposition - 100.0*state.thresholdRatio;
+              float rightResizeHeight = height*(rightReduction - 0.1*state.thresholdRatio);
+              float rightResizeWidth = width*(rightReduction - 0.1*state.thresholdRatio);
+              float rightResizeXposition = rightXposition - 50.0*state.thresholdRatio;
               float rightResizeYposition = (rightCenterYposition - rightResizeWidth/2);
               self.rightImageView.frame = CGRectMake(rightResizeXposition, rightResizeYposition, rightResizeWidth, rightResizeHeight);
               self.rightImageView.layer.cornerRadius = rightResizeWidth * 0.5;
 
               rightCoverView.frame = CGRectMake(0,0,rightResizeWidth,rightResizeHeight);
-              rightCoverView.alpha = 3*state.thresholdRatio;
+              rightCoverView.alpha = 1.5*state.thresholdRatio;
               rightCoverView.layer.cornerRadius = rightCoverView.frame.size.width * 0.5;
 
               // for not choice label
-              float rightNameLabelResizeHeight = nameLabelHeight*(rightReduction - 0.2*state.thresholdRatio);
-              float rightNameLabelResizeWidth = nameLabelWidth*(rightReduction - 0.2*state.thresholdRatio);
+              float rightNameLabelResizeHeight = nameLabelHeight*(rightReduction - 0.1*state.thresholdRatio);
+              float rightNameLabelResizeWidth = nameLabelWidth*(rightReduction - 0.1*state.thresholdRatio);
               self.rightUserNameLabel.frame = CGRectMake(rightResizeXposition+rightResizeWidth/2 - rightNameLabelResizeWidth/2, rightResizeYposition+rightResizeHeight+5, rightNameLabelResizeWidth, rightNameLabelResizeHeight);
               self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
 
               // for choice
-              float leftResizeHeight = height + 150*state.thresholdRatio;
-              float leftResizeWidth = width + 150*state.thresholdRatio;
-              float leftResizeXposition = leftXposition - leftResizeWidth + ((center - max_width/2) - leftXposition + leftResizeWidth)*5*state.thresholdRatio;
+              float leftResizeHeight = height + 75*state.thresholdRatio;
+              float leftResizeWidth = width + 75*state.thresholdRatio;
+              float leftResizeXposition = leftXposition - leftResizeWidth + ((center - max_width/2) - leftXposition + leftResizeWidth)*2.5*state.thresholdRatio;
               float leftResizeYposition = (leftCenterYposition - leftResizeHeight/2);
               self.imageView.frame = CGRectMake(leftResizeXposition, leftResizeYposition, leftResizeWidth, leftResizeHeight);
               self.imageView.layer.cornerRadius = leftResizeWidth * 0.5;
@@ -226,14 +226,15 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
               leftCoverView.layer.cornerRadius = leftResizeWidth * 0.5;
 
               // for choice label
-              float leftNameLabelResizeHeight = nameLabelHeight + 37.5*state.thresholdRatio;
-              float leftNameLabelResizeWidth = nameLabelWidth + 37.5*state.thresholdRatio;
+              float leftNameLabelResizeHeight = nameLabelHeight + 18.75*state.thresholdRatio;
+              float leftNameLabelResizeWidth = nameLabelWidth + 18.75*state.thresholdRatio;
               self.leftUserNameLabel.frame = CGRectMake(leftResizeXposition+leftResizeWidth/2 - leftNameLabelResizeWidth/2, leftResizeYposition+leftResizeHeight+5, leftNameLabelResizeWidth, leftNameLabelResizeHeight);
               //self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*leftNameLabelResizeHeight/nameLabelHeight];
             } else {
               // for not choice
-              float rightResizeHeight = height*0.76;
-              float rightResizeWidth = width*0.76;
+              float rightResizeHeight = height*0.56;
+              float rightResizeWidth = width*0.56;
+
               float rightResizeXposition = rightXposition - 20.0;
               float rightResizeYposition = (rightCenterYposition - rightResizeWidth/2);
               self.rightImageView.frame = CGRectMake(rightResizeXposition, rightResizeYposition, rightResizeWidth, rightResizeHeight);
@@ -244,8 +245,8 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
               rightCoverView.layer.cornerRadius = rightCoverView.frame.size.width * 0.5;
 
               // for not choice label
-              float rightNameLabelResizeHeight = nameLabelHeight*0.76;
-              float rightNameLabelResizeWidth = nameLabelWidth*0.76;
+              float rightNameLabelResizeHeight = nameLabelHeight*0.56;
+              float rightNameLabelResizeWidth = nameLabelWidth*0.56;
               self.rightUserNameLabel.frame = CGRectMake(rightResizeXposition+rightResizeWidth/2 - rightNameLabelResizeWidth/2, rightResizeYposition+rightResizeHeight+5, rightNameLabelResizeWidth, rightNameLabelResizeHeight);
               self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
 
@@ -270,11 +271,11 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
         } else if (state.direction == MDCSwipeDirectionRight) {
             float reduction = 1.0f - state.thresholdRatio;
             [superview bringSubviewToFront:self.rightImageView];
-            if (reduction >= 0.80) {
+            if (reduction >= 0.60) {
               // for choice
-              float rightResizeHeight = height + 150*state.thresholdRatio;
-              float rightResizeWidth = width + 150*state.thresholdRatio;
-              float rightResizeXposition = rightXposition - (rightXposition - (center - max_width/2))*5*state.thresholdRatio;
+              float rightResizeHeight = height + 75*state.thresholdRatio;
+              float rightResizeWidth = width + 75*state.thresholdRatio;
+              float rightResizeXposition = rightXposition - (rightXposition - (center - max_width/2))*2.5*state.thresholdRatio;
               float rightResizeYposition = (rightCenterYposition - rightResizeWidth/2);
               self.rightImageView.frame = CGRectMake(rightResizeXposition, rightResizeYposition, rightResizeWidth, rightResizeHeight);
               self.rightImageView.layer.cornerRadius = rightResizeWidth * 0.5;
@@ -284,26 +285,26 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
               rightCoverView.layer.cornerRadius = rightResizeWidth * 0.5;
 
               // for choice label
-              float rightNameLabelResizeHeight = nameLabelHeight + 37.5*state.thresholdRatio;
-              float rightNameLabelResizeWidth = nameLabelWidth + 37.5*state.thresholdRatio;
+              float rightNameLabelResizeHeight = nameLabelHeight + 18.75*state.thresholdRatio;
+              float rightNameLabelResizeWidth = nameLabelWidth + 18.75*state.thresholdRatio;
               self.rightUserNameLabel.frame = CGRectMake(rightResizeXposition+rightResizeWidth/2 - rightNameLabelResizeWidth/2, rightResizeYposition+rightResizeHeight+5, rightNameLabelResizeWidth, rightNameLabelResizeHeight);
               self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
 
               // for not choice
-              float leftResizeHeight = height*(reduction - 0.2*state.thresholdRatio);
-              float leftResizeWidth = width*(reduction - 0.2*state.thresholdRatio);
-              float leftResizeXposition = leftXposition - leftResizeWidth + 100.0*state.thresholdRatio;
+              float leftResizeHeight = height*(reduction - 0.1*state.thresholdRatio);
+              float leftResizeWidth = width*(reduction - 0.1*state.thresholdRatio);
+              float leftResizeXposition = leftXposition - leftResizeWidth + 50.0*state.thresholdRatio;
               float leftResizeYposition = (leftCenterYposition - leftResizeHeight/2);
               self.imageView.frame = CGRectMake(leftResizeXposition, leftResizeYposition, leftResizeWidth, leftResizeHeight);
               self.imageView.layer.cornerRadius = leftResizeWidth * 0.5;
 
               leftCoverView.frame = CGRectMake(0,0,leftResizeWidth,leftResizeHeight);
-              leftCoverView.alpha = 3*state.thresholdRatio;
+              leftCoverView.alpha = 1.5*state.thresholdRatio;
               leftCoverView.layer.cornerRadius = leftResizeWidth * 0.5;
 
               // for not choice label
-              float leftNameLabelResizeHeight = nameLabelHeight*(reduction - 0.2*state.thresholdRatio);
-              float leftNameLabelResizeWidth = nameLabelWidth*(reduction - 0.2*state.thresholdRatio);
+              float leftNameLabelResizeHeight = nameLabelHeight*(reduction - 0.1*state.thresholdRatio);
+              float leftNameLabelResizeWidth = nameLabelWidth*(reduction - 0.1*state.thresholdRatio);
               self.leftUserNameLabel.frame = CGRectMake(leftResizeXposition+leftResizeWidth/2 - leftNameLabelResizeWidth/2, leftResizeYposition+leftResizeHeight+5, leftNameLabelResizeWidth, leftNameLabelResizeHeight);
               self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*leftNameLabelResizeHeight/nameLabelHeight];
 
@@ -328,16 +329,16 @@ static CGFloat const MDCSwipeToChooseViewLabelWidth = 65.f;
               self.rightUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*rightNameLabelResizeHeight/nameLabelHeight];
 
               // for not choice
-              float leftResizeHeight = height*0.76;
-              float leftResizeWidth = width*0.76;
+              float leftResizeHeight = height*0.56;
+              float leftResizeWidth = width*0.56;
               float leftResizeXposition = leftXposition - leftResizeWidth + 20.0;
               float leftResizeYposition = (leftCenterYposition - leftResizeHeight/2);
               self.imageView.frame = CGRectMake(leftResizeXposition, leftResizeYposition, leftResizeWidth, leftResizeHeight);
               self.imageView.layer.cornerRadius = leftResizeWidth * 0.5;
 
               // for not choice label
-              float leftNameLabelResizeHeight = nameLabelHeight*0.76;
-              float leftNameLabelResizeWidth = nameLabelWidth*0.76;
+              float leftNameLabelResizeHeight = nameLabelHeight*0.56;
+              float leftNameLabelResizeWidth = nameLabelWidth*0.56;
               self.leftUserNameLabel.frame = CGRectMake(leftResizeXposition+leftResizeWidth/2 - leftNameLabelResizeWidth/2, leftResizeYposition+leftResizeHeight+5, leftNameLabelResizeWidth, leftNameLabelResizeHeight);
               self.leftUserNameLabel.font = [UIFont fontWithName:@"HiraKakuProN-W3" size:fontSize*leftNameLabelResizeHeight/nameLabelHeight];
 
